@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Recipes - Delicious Recipes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i> Delicious
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="recipes.html" class="nav-link active">Recipes</a>
+                <a href="add_recipe.html" class="nav-link">Add Recipe</a>
+                <a href="favorites.html" class="nav-link">Favorites</a>
+                <a href="shopping-list.html" class="nav-link">Shopping List</a>
+            </div>
+
+            <div class="auth-buttons flex-center">
+                <a href="login.html" class="btn btn-outline" id="loginLink">Login</a>
+                <a href="signup.html" class="btn btn-primary" id="signupLink">Sign Up</a>
+
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <span class="user-name" id="userName"></span>
+                    <button onclick="logout()" class="btn btn-outline" style="margin-left: 10px;">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-small" style="text-align: center; padding: 120px 0 60px;">
+        <div class="container">
+            <h1 class="hero-title">Browse Recipes</h1>
+            <p class="hero-subtitle">Discover new flavors and culinary inspiration</p>
+        </div>
+    </div>
+
+    <div class="container" style="margin-bottom: 5rem;">
+        <!-- Search & Filter Section -->
+        <div class="glass-card" style="margin-bottom: 3rem; padding: 2rem;">
+            <div class="grid" style="grid-template-columns: 2fr 1fr 1fr 1fr; gap: 1rem; align-items: center;">
+                <div style="position: relative;">
+                    <input type="text" id="searchInput" class="input-field" placeholder="Search recipes..."
+                        style="padding-left: 2.5rem;">
+                    <i class="fas fa-search"
+                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray);"></i>
+                </div>
+
+                <select id="categoryFilter" class="input-field">
+                    <option value="all">All Categories</option>
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="dessert">Dessert</option>
+                </select>
+
+                <select id="difficultyFilter" class="input-field">
+                    <option value="all">All Difficulties</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+
+                <button id="filterBtn" class="btn btn-primary" style="justify-content: center;">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+
+                <button id="surpriseMeBtn" class="btn btn-outline"
+                    style="justify-content: center; border-color: var(--accent); color: var(--accent);">
+                    <i class="fas fa-dice"></i> Surprise Me!
+                </button>
+            </div>
+        </div>
+
+        <!-- Recipe Grid -->
+        <div id="recipesGrid" class="grid"
+            style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
+            <!-- Recipes will be loaded here -->
+            <div class="glass-card" style="text-align: center; padding: 3rem; grid-column: 1 / -1;">
+                <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary);"></i>
+                <p style="margin-top: 1rem; color: var(--gray);">Loading recipes...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Delicious Recipes</h3>
+                    <p>Discover the joy of cooking with our curated collection of recipes from around the world.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="recipes.html">Recipes</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p><i class="fas fa-envelope"></i> hello@deliciousrecipes.com</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Delicious Recipes. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script src="mock-api.js"></script>
+    <script src="dark-mode-handler.js"></script>
+    <script src="theme-toggle.js"></script>
+    <script src="rating-system.js"></script>
+    <script src="random-recipe.js"></script>
+
+    <script>
+        // Load recipes on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRecipes();
+
+            // Add event listeners for filters
+            document.getElementById('searchInput').addEventListener('input', debounce(loadRecipes, 300));
+            document.getElementById('categoryFilter').addEventListener('change', loadRecipes);
+            document.getElementById('difficultyFilter').addEventListener('change', loadRecipes);
+            document.getElementById('filterBtn').addEventListener('click', loadRecipes);
+
+            // Add surprise me button handler
+            const surpriseMeBtn = document.getElementById('surpriseMeBtn');
+            if (surpriseMeBtn && window.RandomRecipe) {
+                surpriseMeBtn.addEventListener('click', () => {
+                    window.RandomRecipe.getRandomRecipe();
+                });
+            }
+        });
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        async function loadRecipes() {
+            const grid = document.getElementById('recipesGrid');
+
+            // Get filter values
+            const filters = {
+                search: document.getElementById('searchInput').value,
+                category: document.getElementById('categoryFilter').value,
+                difficulty: document.getElementById('difficultyFilter').value
+            };
+
+            try {
+                const recipes = await window.MockAPI.getRecipes(filters);
+
+                if (recipes.length === 0) {
+                    grid.innerHTML = `
+                        <div class="glass-card" style="text-align: center; padding: 3rem; grid-column: 1 / -1;">
+                            <i class="fas fa-search" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                            <h3>No recipes found</h3>
+                            <p style="color: var(--gray);">Try adjusting your search or filters</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = recipes.map(recipe => createRecipeCard(recipe)).join('');
+
+                // Initialize scroll animations for new elements
+                if (window.initScrollEffects) window.initScrollEffects();
+
+            } catch (error) {
+                console.error('Failed to load recipes:', error);
+                grid.innerHTML = '<p>Error loading recipes. Please try again.</p>';
+            }
+        }
+
+        function createRecipeCard(recipe) {
+            const difficultyColor = {
+                'easy': 'var(--secondary)',
+                'medium': 'var(--accent)',
+                'hard': 'var(--primary)'
+            };
+
+            return `
+                <div class="glass-card recipe-card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="position: relative; height: 200px; overflow: hidden;">
+                        <img src="${recipe.image}" alt="${recipe.title}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;">
+                        <span style="position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.9); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: ${difficultyColor[recipe.difficulty] || 'var(--dark)'};">
+                            ${recipe.difficulty.charAt(0).toUpperCase() + recipe.difficulty.slice(1)}
+                        </span>
+                    </div>
+                    
+                    <div style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.8rem; color: var(--gray); text-transform: uppercase; letter-spacing: 1px;">${recipe.category}</span>
+                            <div style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.9rem; color: #f1c40f;">
+                                <i class="fas fa-star"></i>
+                                <span>${recipe.average_rating ? recipe.average_rating.toFixed(1) : 'New'}</span>
+                            </div>
+                        </div>
+                        
+                        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem; font-family: 'Playfair Display', serif;">${recipe.title}</h3>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 1.5rem; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            ${recipe.description}
+                        </p>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray); font-size: 0.9rem;">
+                                <i class="far fa-clock"></i>
+                                <span>${recipe.time} min</span>
+                            </div>
+                            <a href="recipe.html?id=${recipe.id}" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                View Recipe
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+
+</html>

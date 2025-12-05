@@ -1,0 +1,152 @@
+/* Print Styles for Recipe Pages */
+@media print {
+
+    /* Hide unnecessary elements */
+    nav,
+    .navbar,
+    footer,
+    .btn,
+    button,
+    .auth-buttons,
+    .nav-links,
+    .theme-toggle,
+    .social-share-buttons,
+    .comments-section,
+    .star-rating,
+    .favorite-btn,
+    .hero-bg,
+    .blob {
+        display: none !important;
+    }
+
+    /* Reset page styling */
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+
+    /* Container adjustments */
+    .container {
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Recipe header */
+    .glass-card {
+        background: white !important;
+        border: none !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+
+    h1,
+    h2,
+    h3 {
+        color: black !important;
+        page-break-after: avoid;
+    }
+
+    /* Recipe image */
+    img {
+        max-width: 100%;
+        height: auto !important;
+        page-break-inside: avoid;
+    }
+
+    /* Recipe metadata */
+    .flex,
+    .flex-between {
+        display: flex !important;
+        gap: 1rem;
+        page-break-inside: avoid;
+    }
+
+    /* Ingredients and instructions */
+    .grid {
+        display: block !important;
+    }
+
+    ul,
+    ol {
+        page-break-inside: avoid;
+    }
+
+    li {
+        page-break-inside: avoid;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Section titles */
+    .section-title {
+        font-weight: bold;
+        font-size: 14pt;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        border-bottom: 2px solid black;
+        padding-bottom: 0.25rem;
+    }
+
+    /* Tags */
+    .tag {
+        border: 1px solid black;
+        padding: 0.25rem 0.5rem;
+        margin-right: 0.5rem;
+        display: inline-block;
+    }
+
+    /* Page breaks */
+    .page-break {
+        page-break-before: always;
+    }
+
+    /* Print header */
+    .print-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        border-bottom: 3px solid black;
+        padding-bottom: 1rem;
+    }
+
+    .print-header h1 {
+        font-size: 24pt;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Print footer */
+    .print-footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 10pt;
+        color: #666;
+        border-top: 1px solid #ccc;
+        padding-top: 0.5rem;
+    }
+
+    /* Ensure good contrast */
+    * {
+        color: black !important;
+        background: white !important;
+    }
+
+    /* Icons */
+    i {
+        font-style: normal;
+    }
+
+    i.fa-clock::before {
+        content: "⏱ ";
+    }
+
+    i.fa-users::before {
+        content: "👥 ";
+    }
+
+    i.fa-check-circle::before {
+        content: "✓ ";
+    }
+}

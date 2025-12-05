@@ -1,0 +1,281 @@
+/* Beautiful Animation Library for Recipe Website - Simplified */
+
+:root {
+    /* Beautiful timing functions */
+    --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --ease-snappy: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Essential Animation Keyframes - keeping only smooth ones */
+@keyframes fadeInUp {
+    from { 
+        transform: translateY(30px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1; 
+    }
+}
+
+@keyframes fadeInDown {
+    from { 
+        transform: translateY(-30px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1; 
+    }
+}
+
+@keyframes fadeInLeft {
+    from { 
+        transform: translateX(-30px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
+}
+
+@keyframes fadeInRight {
+    from { 
+        transform: translateX(30px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
+}
+
+@keyframes slideInUp {
+    from { 
+        transform: translateY(50px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1; 
+    }
+}
+
+@keyframes slideInDown {
+    from { 
+        transform: translateY(-50px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1; 
+    }
+}
+
+/* Simple pulse for subtle emphasis */
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1); 
+    }
+    50% { 
+        transform: scale(1.02); 
+    }
+}
+
+/* Beautiful Animation Classes */
+.animate-fadeInUp {
+    animation: fadeInUp 0.8s var(--ease-smooth);
+}
+
+.animate-fadeInDown {
+    animation: fadeInDown 0.8s var(--ease-smooth);
+}
+
+.animate-fadeInLeft {
+    animation: fadeInLeft 0.8s var(--ease-smooth);
+}
+
+.animate-fadeInRight {
+    animation: fadeInRight 0.8s var(--ease-smooth);
+}
+
+.animate-slideInUp {
+    animation: slideInUp 1s ease-out;
+}
+
+.animate-slideInDown {
+    animation: slideInDown 1s ease-out;
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Staggered Animations for beautiful entrance effects */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+
+/* Beautiful Hover Effects */
+.hover-lift:hover {
+    transform: translateY(-8px);
+    transition: transform 0.3s var(--ease-bounce);
+}
+
+.hover-scale:hover {
+    transform: scale(1.03);
+    transition: transform 0.3s var(--ease-bounce);
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 25px rgba(255, 107, 107, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+/* Interactive Elements */
+.interactive-btn {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.interactive-btn:active {
+    transform: scale(0.98);
+}
+
+.interactive-card {
+    cursor: pointer;
+    transition: all 0.4s var(--ease-bounce);
+    perspective: 1000px;
+}
+
+.interactive-card:hover {
+    transform: translateY(-10px) scale(1.02);
+}
+
+/* Scroll Animations - smooth entrance */
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s var(--ease-smooth);
+}
+
+.scroll-animate.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Beautiful Focus States */
+.focus-ring:focus {
+    outline: 2px solid #45b7d1;
+    outline-offset: 2px;
+}
+
+/* Loading Animations - subtle and beautiful */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 107, 107, 0.3);
+    border-top: 3px solid #ff6b6b;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { 
+        transform: rotate(0deg); 
+    }
+    100% { 
+        transform: rotate(360deg); 
+    }
+}
+
+/* Shimmer effect for beautiful highlights */
+.shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { 
+        transform: translateX(-100%); 
+    }
+    100% { 
+        transform: translateX(100%); 
+    }
+}
+
+/* Reduced Motion Support - accessibility first */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .animate-* {
+        animation: none !important;
+    }
+    
+    .hover-lift:hover,
+    .hover-scale:hover,
+    .interactive-card:hover {
+        transform: none !important;
+    }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .hover-lift:hover,
+    .hover-scale:hover {
+        transform: translateY(-4px) scale(1.01);
+    }
+    
+    .interactive-card:hover {
+        transform: translateY(-6px) scale(1.01);
+    }
+}
+
+@media (max-width: 480px) {
+    .hover-lift:hover,
+    .hover-scale:hover,
+    .interactive-card:hover {
+        transform: none;
+    }
+}
+
+/* Accessibility Improvements */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .hover-glow:hover {
+        box-shadow: 0 0 0 2px currentColor;
+    }
+}

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Recipe - Delicious Recipes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i> Delicious
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="recipes.html" class="nav-link">Recipes</a>
+                <a href="add_recipe.html" class="nav-link active">Add Recipe</a>
+                <a href="favorites.html" class="nav-link">Favorites</a>
+                <a href="shopping-list.html" class="nav-link">Shopping List</a>
+            </div>
+
+            <div class="auth-buttons flex-center">
+                <a href="login.html" class="btn btn-outline" id="loginLink">Login</a>
+                <a href="signup.html" class="btn btn-primary" id="signupLink">Sign Up</a>
+
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <span class="user-name" id="userName"></span>
+                    <button onclick="logout()" class="btn btn-outline" style="margin-left: 10px;">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-small" style="text-align: center; padding: 120px 0 60px;">
+        <div class="container">
+            <h1 class="hero-title">Share Your Recipe</h1>
+            <p class="hero-subtitle">Contribute to our growing community of food lovers</p>
+        </div>
+    </div>
+
+    <div class="container" style="margin-bottom: 5rem;">
+        <form id="addRecipeForm" class="glass-card" style="max-width: 800px; margin: 0 auto; padding: 3rem;">
+
+            <!-- Basic Info -->
+            <h3 class="section-title" style="margin-bottom: 2rem;">Basic Information</h3>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Recipe Title</label>
+                <input type="text" id="recipeTitle" class="input-field" placeholder="e.g., Grandma's Apple Pie"
+                    required>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Category</label>
+                    <select id="recipeCategory" class="input-field" required>
+                        <option value="">Select Category</option>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="dessert">Dessert</option>
+                        <option value="snack">Snack</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Difficulty</label>
+                    <select id="recipeDifficulty" class="input-field" required>
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Prep Time (mins)</label>
+                    <input type="number" id="recipeTime" class="input-field" placeholder="30" required>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Servings</label>
+                    <input type="number" id="recipeServings" class="input-field" placeholder="4" required>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Description</label>
+                <textarea id="recipeDescription" class="input-field" rows="3"
+                    placeholder="Briefly describe your dish..." required></textarea>
+            </div>
+
+            <!-- Ingredients -->
+            <h3 class="section-title" style="margin-bottom: 1.5rem;">Ingredients</h3>
+            <div id="ingredientsList" style="margin-bottom: 1rem;">
+                <div class="flex" style="gap: 1rem; margin-bottom: 1rem;">
+                    <input type="text" class="input-field ingredient-input" placeholder="e.g., 2 cups flour" required>
+                    <button type="button" class="btn btn-outline" onclick="removeField(this)" style="padding: 0 1rem;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline" onclick="addIngredient()" style="margin-bottom: 2rem;">
+                <i class="fas fa-plus"></i> Add Ingredient
+            </button>
+
+            <!-- Instructions -->
+            <h3 class="section-title" style="margin-bottom: 1.5rem;">Instructions</h3>
+            <div id="instructionsList" style="margin-bottom: 1rem;">
+                <div class="flex" style="gap: 1rem; margin-bottom: 1rem;">
+                    <textarea class="input-field instruction-input" rows="2" placeholder="Step 1..."
+                        required></textarea>
+                    <button type="button" class="btn btn-outline" onclick="removeField(this)"
+                        style="padding: 0 1rem; height: auto;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline" onclick="addInstruction()" style="margin-bottom: 2rem;">
+                <i class="fas fa-plus"></i> Add Step
+            </button>
+
+            <!-- Image -->
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Image URL</label>
+                <input type="url" id="recipeImage" class="input-field" placeholder="https://example.com/image.jpg">
+                <p style="font-size: 0.8rem; color: var(--gray); margin-top: 0.5rem;">Leave blank for a random image</p>
+            </div>
+
+            <button type="submit" class="btn btn-primary"
+                style="width: 100%; justify-content: center; font-size: 1.1rem; padding: 1rem;">
+                <i class="fas fa-save"></i> Save Recipe
+            </button>
+        </form>
+    </div>
+
+    <script src="main.js"></script>
+    <script src="mock-api.js"></script>
+    <script src="dark-mode-handler.js"></script>
+
+    <script>
+        function addIngredient() {
+            const div = document.createElement('div');
+            div.className = 'flex';
+            div.style.gap = '1rem';
+            div.style.marginBottom = '1rem';
+            div.innerHTML = `
+                <input type="text" class="input-field ingredient-input" placeholder="Ingredient" required>
+                <button type="button" class="btn btn-outline" onclick="removeField(this)" style="padding: 0 1rem;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            document.getElementById('ingredientsList').appendChild(div);
+        }
+
+        function addInstruction() {
+            const div = document.createElement('div');
+            div.className = 'flex';
+            div.style.gap = '1rem';
+            div.style.marginBottom = '1rem';
+            div.innerHTML = `
+                <textarea class="input-field instruction-input" rows="2" placeholder="Next step..." required></textarea>
+                <button type="button" class="btn btn-outline" onclick="removeField(this)" style="padding: 0 1rem; height: auto;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            document.getElementById('instructionsList').appendChild(div);
+        }
+
+        function removeField(btn) {
+            const list = btn.parentElement.parentElement;
+            if (list.children.length > 1) {
+                btn.parentElement.remove();
+            } else {
+                alert('You need at least one item!');
+            }
+        }
+
+        document.getElementById('addRecipeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            btn.disabled = true;
+
+            // Collect data
+            const ingredients = Array.from(document.querySelectorAll('.ingredient-input')).map(i => i.value).filter(v => v);
+            const instructions = Array.from(document.querySelectorAll('.instruction-input')).map(i => i.value).filter(v => v);
+
+            const recipeData = {
+                title: document.getElementById('recipeTitle').value,
+                category: document.getElementById('recipeCategory').value,
+                difficulty: document.getElementById('recipeDifficulty').value,
+                time: parseInt(document.getElementById('recipeTime').value),
+                servings: parseInt(document.getElementById('recipeServings').value),
+                description: document.getElementById('recipeDescription').value,
+                image: document.getElementById('recipeImage').value,
+                ingredients: ingredients,
+                instructions: instructions
+            };
+
+            try {
+                const result = await window.MockAPI.addRecipe(recipeData);
+                if (result.success) {
+                    alert('Recipe saved successfully!');
+                    window.location.href = 'recipes.html';
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Failed to save recipe.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

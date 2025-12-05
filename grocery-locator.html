@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery Store Locator - Delicious Recipes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+    <style>
+        /* Page specific styles that complement style.css */
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: var(--radius-md);
+            z-index: 1;
+        }
+
+        .store-item {
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .store-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .store-item.selected {
+            border-left: 4px solid var(--primary);
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .price-table th,
+        .price-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--light);
+        }
+
+        .price-table th {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .best-price {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        .ingredient-tag {
+            background: var(--light);
+            padding: 0.3rem 0.8rem;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i> Delicious
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="recipes.html" class="nav-link">Recipes</a>
+                <a href="add_recipe.html" class="nav-link">Add Recipe</a>
+                <a href="favorites.html" class="nav-link">Favorites</a>
+                <a href="shopping-list.html" class="nav-link">Shopping List</a>
+            </div>
+
+            <div class="auth-buttons flex-center">
+                <a href="login.html" class="btn btn-outline" id="loginLink">Login</a>
+                <a href="signup.html" class="btn btn-primary" id="signupLink">Sign Up</a>
+
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <span class="user-name" id="userName"></span>
+                    <button onclick="logout()" class="btn btn-outline" style="margin-left: 10px;">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero" style="min-height: 40vh; padding-top: 100px;">
+        <div class="hero-bg">
+            <div class="blob blob-1" style="top: -20%; right: 20%;"></div>
+            <div class="blob blob-3" style="bottom: -20%; left: 20%;"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title" style="font-size: 3.5rem;">Grocery Locator</h1>
+            <p class="hero-subtitle">Find ingredients nearby and compare prices.</p>
+        </div>
+    </header>
+
+    <main class="container" style="margin-top: -50px; position: relative; z-index: 10;">
+
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+
+            <!-- Search & Filters -->
+            <div class="glass-card" style="padding: 2rem;">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem;">
+                    <i class="fas fa-search" style="color: var(--primary);"></i> Find Stores
+                </h3>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <input type="text" id="locationInput" class="input-field" placeholder="Enter your location...">
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Max Distance</label>
+                    <div class="flex" style="gap: 0.5rem;">
+                        <button class="btn btn-outline active" onclick="setDistance(5)">5 km</button>
+                        <button class="btn btn-outline" onclick="setDistance(10)">10 km</button>
+                        <button class="btn btn-outline" onclick="setDistance(20)">20 km</button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Check Ingredients</label>
+                    <div class="flex" style="gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <input type="text" id="ingredientInput" class="input-field" placeholder="Add ingredient...">
+                        <button class="btn btn-primary" onclick="addIngredient()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div id="ingredientTags"></div>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="searchStores()">
+                    <i class="fas fa-map-marker-alt"></i> Search Nearby
+                </button>
+            </div>
+
+            <!-- Map -->
+            <div class="glass-card" style="padding: 1rem; height: 100%;">
+                <div id="map"></div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="glass-card" style="margin-top: 2rem; padding: 2rem;">
+            <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem;">
+                <i class="fas fa-store" style="color: var(--secondary);"></i> Nearby Stores
+            </h3>
+            <div id="storesList" class="grid"
+                style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <!-- Store items will be populated here -->
+                <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--gray);">
+                    <i class="fas fa-map-marked-alt" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p>Enter your location to find stores nearby.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Comparison -->
+        <div class="glass-card" style="margin-top: 2rem; padding: 2rem; display: none;" id="priceComparison">
+            <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem;">
+                <i class="fas fa-tags" style="color: var(--accent);"></i> Price Comparison
+            </h3>
+            <div style="overflow-x: auto;">
+                <table class="price-table">
+                    <thead>
+                        <tr>
+                            <th>Ingredient</th>
+                            <th>Whole Foods</th>
+                            <th>Trader Joe's</th>
+                            <th>Walmart</th>
+                        </tr>
+                    </thead>
+                    <tbody id="priceTableBody">
+                        <!-- Price rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 Delicious Recipes. Made with <i class="fas fa-heart" style="color: var(--primary);"></i>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="main.js"></script>
+    <script src="mock-api.js"></script>
+    <script src="dark-mode-handler.js"></script>
+    <script src="simple-chatbot.js"></script>
+
+    <script>
+        // Auth Logic
+        function checkAuthStatus() {
+            const session = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || 'null');
+            const loginLink = document.getElementById('loginLink');
+            const signupLink = document.getElementById('signupLink');
+            const userMenu = document.getElementById('userMenu');
+            const userName = document.getElementById('userName');
+
+            if (session) {
+                loginLink.style.display = 'none';
+                signupLink.style.display = 'none';
+                userMenu.style.display = 'flex';
+                userName.textContent = session.name;
+            } else {
+                loginLink.style.display = 'flex';
+                signupLink.style.display = 'flex';
+                userMenu.style.display = 'none';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('userSession');
+            sessionStorage.removeItem('userSession');
+            window.location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', checkAuthStatus);
+
+        // Map Logic
+        let map;
+        let markers = [];
+        let searchIngredients = [];
+
+        function initMap() {
+            // Default to New York
+            map = L.map('map').setView([40.7128, -74.0060], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        }
+
+        document.addEventListener('DOMContentLoaded', initMap);
+
+        function addIngredient() {
+            const input = document.getElementById('ingredientInput');
+            const val = input.value.trim();
+            if (val && !searchIngredients.includes(val)) {
+                searchIngredients.push(val);
+                renderIngredients();
+                input.value = '';
+            }
+        }
+
+        function removeIngredient(val) {
+            searchIngredients = searchIngredients.filter(i => i !== val);
+            renderIngredients();
+        }
+
+        function renderIngredients() {
+            const container = document.getElementById('ingredientTags');
+            container.innerHTML = searchIngredients.map(i => `
+                <span class="ingredient-tag">
+                    ${i} <i class="fas fa-times" style="cursor: pointer; color: var(--primary);" onclick="removeIngredient('${i}')"></i>
+                </span>
+            `).join('');
+        }
+
+        function setDistance(km) {
+            document.querySelectorAll('.btn-outline').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            // Logic to filter by distance would go here
+        }
+
+        function searchStores() {
+            // Mock store data
+            const stores = [
+                { name: "Whole Foods Market", lat: 40.7128, lng: -74.0060, distance: "0.5 km", status: "Open", hours: "8am - 10pm" },
+                { name: "Trader Joe's", lat: 40.7200, lng: -74.0100, distance: "1.2 km", status: "Open", hours: "9am - 9pm" },
+                { name: "Walmart Supercenter", lat: 40.7300, lng: -73.9900, distance: "2.5 km", status: "Open", hours: "24h" }
+            ];
+
+            // Clear markers
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            const list = document.getElementById('storesList');
+            list.innerHTML = '';
+
+            stores.forEach((store, index) => {
+                // Add marker
+                const marker = L.marker([store.lat, store.lng])
+                    .addTo(map)
+                    .bindPopup(`<b>${store.name}</b><br>${store.distance}`);
+                markers.push(marker);
+
+                // Add to list
+                const item = document.createElement('div');
+                item.className = 'glass-card store-item';
+                item.style.padding = '1.5rem';
+                item.innerHTML = `
+                    <div class="flex-between" style="margin-bottom: 0.5rem;">
+                        <h4 style="font-size: 1.2rem; margin: 0;">${store.name}</h4>
+                        <span style="background: #d4edda; color: #155724; padding: 0.2rem 0.6rem; border-radius: 10px; font-size: 0.8rem;">${store.status}</span>
+                    </div>
+                    <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> ${store.distance}
+                    </p>
+                    <p style="color: var(--gray); font-size: 0.9rem;">
+                        <i class="fas fa-clock" style="color: var(--secondary);"></i> ${store.hours}
+                    </p>
+                `;
+                item.onclick = () => {
+                    map.setView([store.lat, store.lng], 15);
+                    marker.openPopup();
+                    document.querySelectorAll('.store-item').forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+                };
+                list.appendChild(item);
+            });
+
+            // Adjust map bounds
+            if (markers.length > 0) {
+                const group = new L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.2));
+            }
+
+            // Show price comparison if ingredients added
+            if (searchIngredients.length > 0) {
+                document.getElementById('priceComparison').style.display = 'block';
+                renderPriceTable();
+            }
+        }
+
+        function renderPriceTable() {
+            const tbody = document.getElementById('priceTableBody');
+            tbody.innerHTML = searchIngredients.map(ing => `
+                <tr>
+                    <td>${ing}</td>
+                    <td>$${(Math.random() * 5 + 2).toFixed(2)}</td>
+                    <td class="best-price">$${(Math.random() * 4 + 1).toFixed(2)}</td>
+                    <td>$${(Math.random() * 4 + 1.5).toFixed(2)}</td>
+                </tr>
+            `).join('');
+        }
+    </script>
+</body>
+
+</html>

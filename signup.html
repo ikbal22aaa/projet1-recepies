@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Delicious Recipes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i> Delicious
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="recipes.html" class="nav-link">Recipes</a>
+                <a href="add_recipe.html" class="nav-link">Add Recipe</a>
+                <a href="favorites.html" class="nav-link">Favorites</a>
+                <a href="shopping-list.html" class="nav-link">Shopping List</a>
+            </div>
+
+            <div class="auth-buttons flex-center">
+                <a href="login.html" class="btn btn-outline" id="loginLink">Login</a>
+                <a href="signup.html" class="btn btn-primary active" id="signupLink">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <div
+        style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 20px 50px; position: relative; overflow: hidden;">
+        <!-- Background Blobs -->
+        <div class="blob blob-1" style="top: 10%; left: 10%;"></div>
+        <div class="blob blob-3" style="bottom: 10%; right: 10%;"></div>
+
+        <div class="glass-card" style="width: 100%; max-width: 500px; padding: 3rem; position: relative; z-index: 10;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div
+                    style="width: 60px; height: 60px; background: var(--gradient-main); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-size: 1.5rem; box-shadow: var(--shadow-glow);">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 0.5rem;">Create
+                    Account</h2>
+                <p style="color: var(--gray);">Join our community of food lovers</p>
+            </div>
+
+            <form id="signupForm">
+                <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">First Name</label>
+                        <input type="text" id="firstName" class="input-field" placeholder="John" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Last Name</label>
+                        <input type="text" id="lastName" class="input-field" placeholder="Doe" required>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email Address</label>
+                    <div style="position: relative;">
+                        <input type="email" id="email" class="input-field" placeholder="Enter your email"
+                            style="padding-left: 2.5rem;" required>
+                        <i class="fas fa-envelope"
+                            style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray);"></i>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="password" class="input-field" placeholder="Create a password"
+                            style="padding-left: 2.5rem;" required>
+                        <i class="fas fa-lock"
+                            style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray);"></i>
+                    </div>
+                    <div
+                        style="margin-top: 0.5rem; height: 4px; background: var(--light); border-radius: 2px; overflow: hidden;">
+                        <div id="passwordStrength"
+                            style="height: 100%; width: 0%; background: var(--secondary); transition: width 0.3s;">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <label class="flex" style="gap: 0.5rem; cursor: pointer; align-items: flex-start;">
+                        <input type="checkbox" required style="accent-color: var(--primary); margin-top: 4px;">
+                        <span style="font-size: 0.9rem; color: var(--gray);">I agree to the <a href="#"
+                                style="color: var(--primary);">Terms of Service</a> and <a href="#"
+                                style="color: var(--primary);">Privacy Policy</a></span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary"
+                    style="width: 100%; justify-content: center; margin-bottom: 1.5rem;">
+                    Create Account
+                </button>
+
+                <div style="text-align: center; margin-bottom: 1.5rem; position: relative;">
+                    <hr style="border: none; border-top: 1px solid var(--light);">
+                    <span
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.8); padding: 0 1rem; color: var(--gray); font-size: 0.9rem;">or
+                        sign up with</span>
+                </div>
+
+                <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                    <button type="button" class="btn btn-outline" style="justify-content: center;">
+                        <i class="fab fa-google"></i> Google
+                    </button>
+                    <button type="button" class="btn btn-outline" style="justify-content: center;">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </button>
+                </div>
+
+                <p style="text-align: center; font-size: 0.9rem;">
+                    Already have an account? <a href="login.html"
+                        style="color: var(--primary); text-decoration: none; font-weight: 600;">Sign in</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+    <script src="dark-mode-handler.js"></script>
+
+    <script>
+        document.getElementById('password').addEventListener('input', function (e) {
+            const val = e.target.value;
+            const bar = document.getElementById('passwordStrength');
+            let strength = 0;
+            if (val.length > 5) strength += 20;
+            if (val.length > 8) strength += 20;
+            if (/[A-Z]/.test(val)) strength += 20;
+            if (/[0-9]/.test(val)) strength += 20;
+            if (/[^A-Za-z0-9]/.test(val)) strength += 20;
+
+            bar.style.width = strength + '%';
+            if (strength < 40) bar.style.background = '#ff6b6b';
+            else if (strength < 80) bar.style.background = '#feca57';
+            else bar.style.background = '#1dd1a1';
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+            btn.disabled = true;
+
+            const email = document.getElementById('email').value;
+            const firstName = document.getElementById('firstName').value;
+
+            // Simulate API call
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Create dummy session
+            const session = {
+                name: firstName,
+                email: email,
+                avatar: `https://ui-avatars.com/api/?name=${firstName}&background=FF6B6B&color=fff`
+            };
+
+            localStorage.setItem('userSession', JSON.stringify(session));
+            window.location.href = 'index.html';
+        });
+
+        // Check if already logged in
+        if (localStorage.getItem('userSession')) {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+
+</html>

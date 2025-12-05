@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Details - Delicious Recipes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="print-styles.css" media="print">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i> Delicious
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="recipes.html" class="nav-link active">Recipes</a>
+                <a href="add_recipe.html" class="nav-link">Add Recipe</a>
+                <a href="favorites.html" class="nav-link">Favorites</a>
+                <a href="shopping-list.html" class="nav-link">Shopping List</a>
+            </div>
+
+            <div class="auth-buttons flex-center">
+                <a href="login.html" class="btn btn-outline" id="loginLink">Login</a>
+                <a href="signup.html" class="btn btn-primary" id="signupLink">Sign Up</a>
+
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <span class="user-name" id="userName"></span>
+                    <button onclick="logout()" class="btn btn-outline" style="margin-left: 10px;">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 100px; padding-bottom: 50px;" id="mainContent">
+        <!-- Content will be loaded dynamically -->
+        <div style="text-align: center; padding: 50px;">
+            <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary);"></i>
+            <p style="margin-top: 20px; color: var(--gray);">Loading recipe...</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Delicious Recipes</h3>
+                    <p>Discover the joy of cooking with our curated collection of recipes from around the world.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="recipes.html">Recipes</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p><i class="fas fa-envelope"></i> hello@deliciousrecipes.com</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Delicious Recipes. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script src="mock-api.js"></script>
+    <script src="dark-mode-handler.js"></script>
+    <script src="theme-toggle.js"></script>
+    <script src="rating-system.js"></script>
+    <script src="comments-system.js"></script>
+    <script src="social-share.js"></script>
+    <script src="cooking-timer.js"></script>
+    <script src="trending-tracker.js"></script>
+    <script src="collections-manager.js"></script>
+
+    <script>
+        // Live Server Only - No PHP needed
+        function getId() {
+            const params = new URLSearchParams(location.search);
+            return params.get('id');
+        }
+
+        async function fetchRecipe(id) {
+            try {
+                const data = await window.MockAPI.getRecipe(id);
+                return data;
+            } catch (error) {
+                console.error(error);
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="glass-card" style="text-align: center; padding: 3rem;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                        <h2>Recipe Not Found</h2>
+                        <p style="color: var(--gray); margin-bottom: 2rem;">The recipe you are looking for does not exist or could not be loaded.</p>
+                        <a href="recipes.html" class="btn btn-primary">Browse Recipes</a>
+                    </div>
+                `;
+            }
+        }
+
+        function getFavorites() {
+            try {
+                return JSON.parse(localStorage.getItem('favorites') || '[]');
+            } catch (_) {
+                return [];
+            }
+        }
+
+        function handleFavoriteToggle(recipeId) {
+            const favorites = getFavorites();
+            const index = favorites.indexOf(recipeId);
+
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(recipeId);
+            }
+
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+
+            // Re-render button state
+            const btn = document.querySelector('.favorite-btn');
+            const isFavorited = favorites.includes(recipeId);
+            updateFavoriteButton(btn, isFavorited);
+        }
+
+        function updateFavoriteButton(btn, isFavorited) {
+            if (isFavorited) {
+                btn.innerHTML = '<i class="fas fa-heart"></i> Remove from Favorites';
+                btn.classList.remove('btn-outline');
+                btn.classList.add('btn-primary');
+            } else {
+                btn.innerHTML = '<i class="far fa-heart"></i> Add to Favorites';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline');
+            }
+        }
+
+        function render(data) {
+            if (!data) return;
+            const r = data;
+            const recipeId = r.id;
+            const isFavorited = getFavorites().includes(recipeId);
+
+            // Track view for trending
+            if (window.TrendingTracker) {
+                window.TrendingTracker.trackView(recipeId);
+            }
+
+            const difficultyEmoji = {
+                'easy': '😊',
+                'medium': '🤔',
+                'hard': '😤'
+            };
+
+            const img = r.image ? r.image : 'https://placehold.co/1200x600/ff6b6b/white?text=Recipe';
+
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="glass-card" style="padding: 0; overflow: hidden; margin-bottom: 2rem;">
+                    <div style="height: 400px; position: relative;">
+                        <img src="${img}" alt="${r.title}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 2rem;">
+                            <h1 style="color: white; font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 0.5rem;">${r.title}</h1>
+                            <div class="flex" style="gap: 1.5rem; color: white;">
+                                <span><i class="fas fa-clock"></i> ${r.time} mins</span>
+                                <span><i class="fas fa-users"></i> ${r.servings} servings</span>
+                                <span>${difficultyEmoji[r.difficulty] || '🤔'} ${r.difficulty}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 2rem;">
+                        <!-- Action Buttons -->
+                        <div class="flex-between" style="margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                            <div class="flex" style="gap: 1rem; flex-wrap: wrap;">
+                                <span class="tag" style="background: var(--light); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">${r.category || 'General'}</span>
+                                <span class="tag" style="background: var(--light); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">${r.calories || '350'} kcal</span>
+                                <div id="recipe-rating-display"></div>
+                            </div>
+                            <div class="flex" style="gap: 0.5rem; flex-wrap: wrap;">
+                                <button class="btn btn-outline favorite-btn" onclick="handleFavoriteToggle(${recipeId})">
+                                    <i class="far fa-heart"></i> Add to Favorites
+                                </button>
+                                <button class="btn btn-outline" id="add-to-collection-btn">
+                                    <i class="fas fa-folder-plus"></i> Collection
+                                </button>
+                                <button class="btn btn-outline" onclick="window.CookingTimer.show(${r.time})">
+                                    <i class="fas fa-clock"></i> Timer
+                                </button>
+                                <button class="btn btn-outline" onclick="window.print()">
+                                    <i class="fas fa-print"></i> Print
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Rating Section -->
+                        <div class="glass-card" style="padding: 1.5rem; margin-bottom: 2rem;">
+                            <h4 style="margin-bottom: 1rem;">Rate this Recipe</h4>
+                            <div id="interactive-rating" style="margin-bottom: 1rem;"></div>
+                        </div>
+
+                        <!-- Share Section -->
+                        <div class="glass-card" style="padding: 1.5rem; margin-bottom: 2rem;">
+                            <h4 style="margin-bottom: 1rem;"><i class="fas fa-share-alt"></i> Share this Recipe</h4>
+                            <div id="share-buttons"></div>
+                        </div>
+
+                        <div class="grid" style="grid-template-columns: 1fr 2fr; gap: 3rem;">
+                            <div>
+                                <h3 class="section-title" style="margin-bottom: 1.5rem;">Ingredients</h3>
+                                <ul style="list-style: none; padding: 0;">
+                                    ${r.ingredients.map(ing => `
+                                        <li style="padding: 0.8rem 0; border-bottom: 1px solid var(--light); display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-check-circle" style="color: var(--secondary);"></i>
+                                            ${ing}
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <h3 class="section-title" style="margin-bottom: 1.5rem;">Instructions</h3>
+                                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                                    ${r.instructions.map((step, index) => `
+                                        <div style="display: flex; gap: 1rem;">
+                                            <div style="width: 30px; height: 30px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700;">${index + 1}</div>
+                                            <p style="line-height: 1.6; color: var(--dark);">${step}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center" style="margin-bottom: 3rem;">
+                    <a href="recipes.html" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i> Back to Recipes
+                    </a>
+                </div>
+            `;
+
+            // Initial button state update
+            updateFavoriteButton(document.querySelector('.favorite-btn'), isFavorited);
+
+            // Add rating display
+            if (window.RatingSystem) {
+                const ratingDisplay = window.RatingSystem.createDisplayRating(r.average_rating || 0, r.rating_count || 0);
+                document.getElementById('recipe-rating-display').appendChild(ratingDisplay);
+
+                // Add interactive rating
+                const userRating = window.RatingSystem.getUserRating(recipeId);
+                const interactiveRating = window.RatingSystem.createStarRating(recipeId, userRating, true);
+                document.getElementById('interactive-rating').appendChild(interactiveRating);
+            }
+
+            // Add share buttons
+            if (window.SocialShare) {
+                const shareButtons = window.SocialShare.createShareButtons(r.title);
+                document.getElementById('share-buttons').appendChild(shareButtons);
+            }
+
+            // Add collection button handler
+            const collectionBtn = document.getElementById('add-to-collection-btn');
+            if (collectionBtn && window.CollectionsManager) {
+                collectionBtn.addEventListener('click', () => {
+                    window.CollectionsManager.showCollectionModal(recipeId);
+                });
+            }
+
+            // Add comments section
+            if (window.CommentsSystem) {
+                const commentsSection = window.CommentsSystem.createCommentsSection(recipeId);
+                mainContent.appendChild(commentsSection);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const id = getId();
+            if (id) {
+                const data = await fetchRecipe(id);
+                render(data);
+            } else {
+                // If no ID, redirect or show error (for demo purposes, load a default)
+                // window.location.href = 'recipes.html';
+                const data = await fetchRecipe(1); // Load first recipe as fallback for demo
+                render(data);
+            }
+        });
+    </script>
+</body>
+
+</html>

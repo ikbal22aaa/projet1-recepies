@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorites - Delicious Recipes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i> Delicious
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="recipes.html" class="nav-link">Recipes</a>
+                <a href="add_recipe.html" class="nav-link">Add Recipe</a>
+                <a href="favorites.html" class="nav-link active">Favorites</a>
+                <a href="shopping-list.html" class="nav-link">Shopping List</a>
+            </div>
+
+            <div class="auth-buttons flex-center">
+                <a href="login.html" class="btn btn-outline" id="loginLink">Login</a>
+                <a href="signup.html" class="btn btn-primary" id="signupLink">Sign Up</a>
+
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <span class="user-name" id="userName"></span>
+                    <button onclick="logout()" class="btn btn-outline" style="margin-left: 10px;">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero" style="min-height: 40vh; padding-top: 100px;">
+        <div class="hero-bg">
+            <div class="blob blob-1" style="top: -20%; right: -10%;"></div>
+            <div class="blob blob-2" style="bottom: -20%; left: -10%;"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title" style="font-size: 3.5rem;">Your Favorites</h1>
+            <p class="hero-subtitle">A collection of your most loved dishes.</p>
+        </div>
+    </header>
+
+    <main class="container" style="margin-top: -50px; position: relative; z-index: 10;">
+        <div class="glass-card"
+            style="padding: 2rem; margin-bottom: 3rem; text-align: center; border-left: 4px solid var(--accent);">
+            <i class="fas fa-info-circle" style="font-size: 2rem; color: var(--accent); margin-bottom: 1rem;"></i>
+            <p style="color: var(--gray);">Favorites are stored in your browser's localStorage and will persist between
+                sessions.</p>
+        </div>
+
+        <section class="recipe-grid" id="favoritesGrid">
+            <div class="loading-spinner" style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary);"></i>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 Delicious Recipes. Made with <i class="fas fa-heart" style="color: var(--primary);"></i>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script src="mock-api.js"></script>
+    <script src="dark-mode-handler.js"></script>
+    <script src="simple-chatbot.js"></script>
+
+    <script>
+        // Auth Logic
+        function checkAuthStatus() {
+            const session = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || 'null');
+            const loginLink = document.getElementById('loginLink');
+            const signupLink = document.getElementById('signupLink');
+            const userMenu = document.getElementById('userMenu');
+            const userName = document.getElementById('userName');
+
+            if (session) {
+                loginLink.style.display = 'none';
+                signupLink.style.display = 'none';
+                userMenu.style.display = 'flex';
+                userName.textContent = session.name;
+            } else {
+                loginLink.style.display = 'flex';
+                signupLink.style.display = 'flex';
+                userMenu.style.display = 'none';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('userSession');
+            sessionStorage.removeItem('userSession');
+            window.location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', checkAuthStatus);
+
+        function getFavorites() {
+            try {
+                return JSON.parse(localStorage.getItem('favorites') || '[]');
+            } catch (_) {
+                return [];
+            }
+        }
+
+        async function fetchRecipe(id) {
+            try {
+                const data = await window.MockAPI.getRecipe(id);
+                return { recipe: data };
+            } catch (error) {
+                // Return mock data if API fails
+                return {
+                    recipe: {
+                        id: id,
+                        title: "Mock Recipe " + id,
+                        image: "https://placehold.co/600x400/ff6b6b/white?text=Recipe",
+                        time: "30 min",
+                        servings: 4,
+                        difficulty: "medium"
+                    }
+                };
+            }
+        }
+
+        async function renderFavorites() {
+            const grid = document.getElementById('favoritesGrid');
+            const ids = getFavorites();
+
+            if (ids.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 4rem 2rem; background: rgba(255,255,255,0.5); border-radius: var(--radius-md);">
+                        <i class="fas fa-heart-broken" style="font-size: 4rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">No favorites yet</h3>
+                        <p style="color: var(--gray); margin-bottom: 1.5rem;">Start exploring recipes and add them to your favorites!</p>
+                        <a href="recipes.html" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Browse Recipes
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = '';
+
+            for (const id of ids) {
+                try {
+                    const data = await fetchRecipe(id);
+                    const r = data.recipe;
+
+                    const div = document.createElement('div');
+                    div.className = 'glass-card recipe-card';
+
+                    const img = r.image ? r.image : 'https://placehold.co/600x400/ff6b6b/white?text=Recipe';
+                    const difficultyEmoji = {
+                        'easy': '😊',
+                        'medium': '🤔',
+                        'hard': '😤'
+                    };
+
+                    div.innerHTML = `
+                        <img src="${img}" alt="${r.title}" class="recipe-card-img">
+                        <div class="recipe-card-content">
+                            <h3 style="font-size: 1.3rem; margin-bottom: 1rem;">${r.title}</h3>
+                            <div class="flex-between" style="color: var(--gray); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                                <span><i class="fas fa-clock"></i> ${r.time} min</span>
+                                <span><i class="fas fa-users"></i> ${r.servings}</span>
+                                <span>${difficultyEmoji[r.difficulty] || '🤔'} ${r.difficulty}</span>
+                            </div>
+                            <a href="recipe.html?id=${r.id}" class="btn btn-outline" style="width: 100%; justify-content: center;">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                        </div>
+                    `;
+                    grid.appendChild(div);
+                } catch (error) {
+                    console.error(`Failed to load recipe ${id}:`, error);
+                }
+            }
+        }
+
+        // Initial load
+        renderFavorites();
+
+        // Listen for storage changes
+        window.addEventListener('storage', function (e) {
+            if (e.key === 'favorites') {
+                renderFavorites();
+            }
+        });
+    </script>
+</body>
+
+</html>

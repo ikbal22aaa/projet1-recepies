@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Delicious Recipes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i> Delicious
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="recipes.html" class="nav-link">Recipes</a>
+                <a href="add_recipe.html" class="nav-link">Add Recipe</a>
+                <a href="favorites.html" class="nav-link">Favorites</a>
+                <a href="shopping-list.html" class="nav-link">Shopping List</a>
+            </div>
+
+            <div class="auth-buttons flex-center">
+                <a href="login.html" class="btn btn-outline" id="loginLink">Login</a>
+                <a href="signup.html" class="btn btn-primary" id="signupLink">Sign Up</a>
+
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <span class="user-name" id="userName"></span>
+                    <button onclick="logout()" class="btn btn-outline" style="margin-left: 10px;">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-small" style="text-align: center; padding: 120px 0 60px;">
+        <div class="container">
+            <h1 class="hero-title">My Profile</h1>
+            <p class="hero-subtitle">Manage your account and preferences</p>
+        </div>
+    </div>
+
+    <div class="container" style="margin-bottom: 5rem;">
+        <div class="grid" style="grid-template-columns: 1fr 2fr; gap: 2rem;">
+            <!-- Profile Card -->
+            <div class="glass-card" style="text-align: center; padding: 2rem;">
+                <div
+                    style="width: 120px; height: 120px; background: var(--gradient-main); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: white; font-size: 3rem; box-shadow: var(--shadow-glow); position: relative; overflow: hidden;">
+                    <img id="profileAvatarImg" src="" alt="Profile"
+                        style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                    <i class="fas fa-user" id="profileAvatarIcon"></i>
+                </div>
+                <h2 id="profileName"
+                    style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 0.5rem;">Loading...
+                </h2>
+                <p id="profileEmail" style="color: var(--gray); margin-bottom: 2rem;">Loading...</p>
+
+                <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                    <div style="background: var(--light); padding: 1rem; border-radius: var(--radius-sm);">
+                        <div id="recipesCount" style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">0
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">Recipes</div>
+                    </div>
+                    <div style="background: var(--light); padding: 1rem; border-radius: var(--radius-sm);">
+                        <div id="favoritesCount" style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">0
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">Favorites</div>
+                    </div>
+                    <div style="background: var(--light); padding: 1rem; border-radius: var(--radius-sm);">
+                        <div id="reviewsCount" style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">0
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">Reviews</div>
+                    </div>
+                </div>
+
+                <div class="flex-center" style="gap: 1rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="editProfile()" style="width: 100%;">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                    <button class="btn btn-outline" onclick="changePassword()" style="width: 100%;">
+                        <i class="fas fa-key"></i> Change Password
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <!-- Recent Activity -->
+                <div class="glass-card">
+                    <h3 class="section-title" style="margin-bottom: 1.5rem;">
+                        <i class="fas fa-clock" style="color: var(--primary);"></i> Recent Activity
+                    </h3>
+                    <ul id="activityList" style="list-style: none;">
+                        <!-- Activity items will be injected here -->
+                    </ul>
+                </div>
+
+                <!-- Settings -->
+                <div class="glass-card">
+                    <h3 class="section-title" style="margin-bottom: 1.5rem;">
+                        <i class="fas fa-cog" style="color: var(--primary);"></i> Account Settings
+                    </h3>
+
+                    <div class="flex-between" style="padding: 1rem 0; border-bottom: 1px solid var(--light);">
+                        <div>
+                            <div style="font-weight: 600;">Email Notifications</div>
+                            <div style="font-size: 0.9rem; color: var(--gray);">Receive updates about new recipes</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked onchange="toggleSetting(this, 'notifications')">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <div class="flex-between" style="padding: 1rem 0; border-bottom: 1px solid var(--light);">
+                        <div>
+                            <div style="font-weight: 600;">Dark Mode</div>
+                            <div style="font-size: 0.9rem; color: var(--gray);">Use dark theme across the application
+                            </div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="darkModeToggle" onchange="toggleSetting(this, 'darkMode')">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <div class="flex-between" style="padding: 1rem 0;">
+                        <div>
+                            <div style="font-weight: 600;">Public Profile</div>
+                            <div style="font-size: 0.9rem; color: var(--gray);">Allow others to see your recipes</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked onchange="toggleSetting(this, 'publicProfile')">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Delicious Recipes</h3>
+                    <p>Discover the joy of cooking with our curated collection of recipes from around the world.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="recipes.html">Recipes</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p><i class="fas fa-envelope"></i> hello@deliciousrecipes.com</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Delicious Recipes. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script src="dark-mode-handler.js"></script>
+
+    <script>
+        // Check authentication
+        function checkAuth() {
+            const session = JSON.parse(localStorage.getItem('userSession') || 'null');
+            if (!session) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return session;
+        }
+
+        // Load user profile data
+        function loadProfile() {
+            const session = checkAuth();
+            if (!session) return;
+
+            // Update profile info
+            document.getElementById('profileName').textContent = session.name;
+            document.getElementById('profileEmail').textContent = session.email;
+
+            if (session.avatar) {
+                const img = document.getElementById('profileAvatarImg');
+                img.src = session.avatar;
+                img.style.display = 'block';
+                document.getElementById('profileAvatarIcon').style.display = 'none';
+            }
+
+            // Load user stats (Mock data)
+            document.getElementById('recipesCount').textContent = Math.floor(Math.random() * 10);
+            document.getElementById('favoritesCount').textContent = JSON.parse(localStorage.getItem('favorites') || '[]').length;
+            document.getElementById('reviewsCount').textContent = Math.floor(Math.random() * 5);
+
+            // Load recent activity (Mock data)
+            loadRecentActivity();
+        }
+
+        function loadRecentActivity() {
+            const activities = [
+                { icon: 'heart', title: 'Added recipe to favorites', time: '2 hours ago' },
+                { icon: 'star', title: 'Rated a recipe 5 stars', time: '1 day ago' },
+                { icon: 'plus', title: 'Created new recipe', time: '3 days ago' }
+            ];
+
+            const list = document.getElementById('activityList');
+            list.innerHTML = activities.map(a => `
+                <li style="display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--light);">
+                    <div style="width: 40px; height: 40px; background: var(--light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                        <i class="fas fa-${a.icon}"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">${a.title}</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">${a.time}</div>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        function toggleSetting(el, setting) {
+            // Logic to save setting
+            console.log(`Toggled ${setting}: ${el.checked}`);
+            if (setting === 'darkMode') {
+                // Handled by dark-mode-handler.js usually, but for immediate effect:
+                if (el.checked) document.body.classList.add('dark-mode');
+                else document.body.classList.remove('dark-mode');
+            }
+        }
+
+        function editProfile() {
+            alert('Edit profile feature coming soon!');
+        }
+
+        function changePassword() {
+            alert('Change password feature coming soon!');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadProfile);
+    </script>
+
+    <style>
+        /* Switch Toggle Style */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary);
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px var(--primary);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+    </style>
+</body>
+
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping List - Delicious Recipes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i> Delicious
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="recipes.html" class="nav-link">Recipes</a>
+                <a href="add_recipe.html" class="nav-link">Add Recipe</a>
+                <a href="favorites.html" class="nav-link">Favorites</a>
+                <a href="shopping-list.html" class="nav-link active">Shopping List</a>
+            </div>
+
+            <div class="auth-buttons flex-center">
+                <a href="login.html" class="btn btn-outline" id="loginLink">Login</a>
+                <a href="signup.html" class="btn btn-primary" id="signupLink">Sign Up</a>
+
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <span class="user-name" id="userName"></span>
+                    <button onclick="logout()" class="btn btn-outline" style="margin-left: 10px;">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-small" style="text-align: center; padding: 120px 0 60px;">
+        <div class="container">
+            <h1 class="hero-title">Shopping List</h1>
+            <p class="hero-subtitle">Manage your ingredients and grocery needs</p>
+        </div>
+    </div>
+
+    <div class="container" style="margin-bottom: 5rem;">
+        <div class="grid" style="grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <!-- Main List -->
+            <div>
+                <div class="glass-card" style="margin-bottom: 2rem;">
+                    <div class="flex" style="gap: 1rem; margin-bottom: 1.5rem;">
+                        <input type="text" id="newItemInput" class="input-field" placeholder="Add new item..."
+                            style="flex: 1;">
+                        <button onclick="addItem()" class="btn btn-primary" style="justify-content: center;">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+
+                    <div id="shoppingList" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <!-- Items will be loaded here -->
+                        <div style="text-align: center; padding: 2rem; color: var(--gray);">
+                            <i class="fas fa-shopping-basket"
+                                style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>Your list is empty</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div>
+                <div class="glass-card" style="position: sticky; top: 100px;">
+                    <h3 class="section-title" style="margin-bottom: 1.5rem;">Summary</h3>
+
+                    <div class="flex-between" style="margin-bottom: 1rem;">
+                        <span style="color: var(--gray);">Total Items</span>
+                        <span id="totalCount" style="font-weight: 700;">0</span>
+                    </div>
+
+                    <div class="flex-between" style="margin-bottom: 1rem;">
+                        <span style="color: var(--gray);">Completed</span>
+                        <span id="completedCount" style="font-weight: 700; color: var(--secondary);">0</span>
+                    </div>
+
+                    <div style="height: 1px; background: var(--light); margin: 1.5rem 0;"></div>
+
+                    <button onclick="clearCompleted()" class="btn btn-outline"
+                        style="width: 100%; justify-content: center; margin-bottom: 1rem;">
+                        <i class="fas fa-check-double"></i> Clear Completed
+                    </button>
+
+                    <button onclick="clearAll()" class="btn btn-outline"
+                        style="width: 100%; justify-content: center; border-color: var(--primary); color: var(--primary);">
+                        <i class="fas fa-trash-alt"></i> Clear All
+                    </button>
+
+                    <div
+                        style="margin-top: 2rem; padding: 1rem; background: rgba(78, 205, 196, 0.1); border-radius: var(--radius-sm); border: 1px solid var(--secondary);">
+                        <div
+                            style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; color: var(--secondary); font-weight: 600;">
+                            <i class="fas fa-lightbulb"></i> Tip
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--gray);">Group items by aisle to save time at the
+                            store!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Delicious Recipes</h3>
+                    <p>Discover the joy of cooking with our curated collection of recipes from around the world.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="recipes.html">Recipes</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p><i class="fas fa-envelope"></i> hello@deliciousrecipes.com</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Delicious Recipes. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script src="dark-mode-handler.js"></script>
+
+    <script>
+        // Shopping List Logic
+        let items = JSON.parse(localStorage.getItem('shoppingList') || '[]');
+
+        function saveItems() {
+            localStorage.setItem('shoppingList', JSON.stringify(items));
+            renderList();
+        }
+
+        function addItem() {
+            const input = document.getElementById('newItemInput');
+            const text = input.value.trim();
+
+            if (text) {
+                items.push({
+                    id: Date.now(),
+                    text: text,
+                    completed: false
+                });
+                input.value = '';
+                saveItems();
+            }
+        }
+
+        function toggleItem(id) {
+            const item = items.find(i => i.id === id);
+            if (item) {
+                item.completed = !item.completed;
+                saveItems();
+            }
+        }
+
+        function deleteItem(id) {
+            items = items.filter(i => i.id !== id);
+            saveItems();
+        }
+
+        function clearCompleted() {
+            items = items.filter(i => !i.completed);
+            saveItems();
+        }
+
+        function clearAll() {
+            if (confirm('Are you sure you want to clear your entire list?')) {
+                items = [];
+                saveItems();
+            }
+        }
+
+        function renderList() {
+            const list = document.getElementById('shoppingList');
+            const totalCount = document.getElementById('totalCount');
+            const completedCount = document.getElementById('completedCount');
+
+            totalCount.textContent = items.length;
+            completedCount.textContent = items.filter(i => i.completed).length;
+
+            if (items.length === 0) {
+                list.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--gray);">
+                        <i class="fas fa-shopping-basket" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>Your list is empty</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = items.map(item => `
+                <div class="shopping-item ${item.completed ? 'completed' : ''}" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--light); border-radius: var(--radius-sm); transition: all 0.2s;">
+                    <div onclick="toggleItem(${item.id})" style="width: 24px; height: 24px; border: 2px solid ${item.completed ? 'var(--secondary)' : 'var(--gray)'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; background: ${item.completed ? 'var(--secondary)' : 'transparent'}; transition: all 0.2s;">
+                        ${item.completed ? '<i class="fas fa-check" style="color: white; font-size: 0.8rem;"></i>' : ''}
+                    </div>
+                    <span style="flex: 1; text-decoration: ${item.completed ? 'line-through' : 'none'}; color: ${item.completed ? 'var(--gray)' : 'var(--dark)'}; transition: all 0.2s;">${item.text}</span>
+                    <button onclick="deleteItem(${item.id})" style="background: none; border: none; color: var(--gray); cursor: pointer; padding: 0.5rem; transition: color 0.2s;">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('newItemInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addItem();
+        });
+
+        // Initial render
+        renderList();
+    </script>
+
+    <style>
+        .shopping-item:hover {
+            transform: translateX(5px);
+            background: white !important;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .shopping-item button:hover {
+            color: var(--primary) !important;
+        }
+    </style>
+</body>
+
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delicious Recipes - Culinary Excellence</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i> Delicious
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="recipes.html" class="nav-link">Recipes</a>
+                <a href="add_recipe.html" class="nav-link">Add Recipe</a>
+                <a href="favorites.html" class="nav-link">Favorites</a>
+                <a href="shopping-list.html" class="nav-link">Shopping List</a>
+            </div>
+
+            <div class="auth-buttons flex-center">
+                <a href="login.html" class="btn btn-outline" id="loginLink">Login</a>
+                <a href="signup.html" class="btn btn-primary" id="signupLink">Sign Up</a>
+
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <span class="user-name" id="userName"></span>
+                    <button onclick="logout()" class="btn btn-outline" style="margin-left: 10px;">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-bg">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+        </div>
+
+        <div class="hero-content">
+            <h1 class="hero-title">Find Your Next<br>Culinary Masterpiece</h1>
+            <p class="hero-subtitle">Discover, cook, and share amazing recipes from around the world.</p>
+            <div class="flex-center" style="gap: 1rem;">
+                <a href="recipes.html" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Browse Recipes
+                </a>
+                <a href="add_recipe.html" class="btn btn-outline">
+                    <i class="fas fa-plus"></i> Share Yours
+                </a>
+                <button class="btn btn-outline" id="surprise-me-btn"
+                    style="border-color: var(--accent); color: var(--accent);">
+                    <i class="fas fa-dice"></i> Surprise Me!
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="features-grid">
+            <div class="glass-card feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3>Diverse Collection</h3>
+                <p>Explore thousands of recipes across various cuisines, dietary preferences, and skill levels.</p>
+            </div>
+
+            <div class="glass-card feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Community Driven</h3>
+                <p>Join a vibrant community of food lovers. Share your own creations and get inspired by others.</p>
+            </div>
+
+            <div class="glass-card feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>Save Favorites</h3>
+                <p>Create your personal cookbook by saving recipes you love for quick and easy access.</p>
+            </div>
+        </section>
+
+        <!-- Trending Recipes Section (will be populated by JavaScript) -->
+        <div id="trending-recipes-container"></div>
+
+        <section class="glass-panel"
+            style="padding: 3rem; border-radius: var(--radius-lg); margin-bottom: 4rem; text-align: center;">
+            <h2 style="margin-bottom: 2rem;">Ready to start cooking?</h2>
+            <a href="recipes.html" class="btn btn-primary">Explore All Recipes</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <h3>Delicious Recipes</h3>
+                    <p>Your daily dose of culinary inspiration.</p>
+                </div>
+                <div>
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="recipes.html">Browse</a></li>
+                        <li><a href="add_recipe.html">Add Recipe</a></li>
+                        <li><a href="favorites.html">Favorites</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Connect</h4>
+                    <div class="flex" style="gap: 1rem; font-size: 1.5rem;">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Delicious Recipes. Made with <i class="fas fa-heart" style="color: var(--primary);"></i>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script src="dark-mode-handler.js"></script>
+    <script src="theme-toggle.js"></script>
+    <script src="mock-api.js"></script>
+    <script src="rating-system.js"></script>
+    <script src="trending-tracker.js"></script>
+    <script src="random-recipe.js"></script>
+    <script src="simple-chatbot.js"></script>
+
+    <script>
+        // Auth Logic (Preserved)
+        function checkAuthStatus() {
+            const session = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || 'null');
+            const loginLink = document.getElementById('loginLink');
+            const signupLink = document.getElementById('signupLink');
+            const userMenu = document.getElementById('userMenu');
+            const userName = document.getElementById('userName');
+
+            if (session) {
+                loginLink.style.display = 'none';
+                signupLink.style.display = 'none';
+                userMenu.style.display = 'flex';
+                userName.textContent = session.name;
+            } else {
+                loginLink.style.display = 'flex';
+                signupLink.style.display = 'flex';
+                userMenu.style.display = 'none';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('userSession');
+            sessionStorage.removeItem('userSession');
+            window.location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', checkAuthStatus);
+
+        // Load trending recipes
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.TrendingTracker) {
+                const trendingSection = await window.TrendingTracker.createTrendingSection();
+                document.getElementById('trending-recipes-container').appendChild(trendingSection);
+            }
+
+            // Add surprise me button handler
+            const surpriseMeBtn = document.getElementById('surprise-me-btn');
+            if (surpriseMeBtn && window.RandomRecipe) {
+                surpriseMeBtn.addEventListener('click', () => {
+                    window.RandomRecipe.getRandomRecipe();
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
